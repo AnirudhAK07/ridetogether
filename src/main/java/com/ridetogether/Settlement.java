@@ -20,4 +20,16 @@ public class Settlement {
                         to + " " +
                         Money.format(amountInPaise));
     }
+
+    public String getFrom() {
+        return from;
+    }
+
+    public String getTo() {
+        return to;
+    }
+
+    public long getAmountInPaise() {
+        return amountInPaise;
+    }
 }
