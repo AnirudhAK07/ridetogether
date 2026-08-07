@@ -1,6 +1,7 @@
 package com.ridetogether;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
@@ -18,5 +19,33 @@ public class TripService {
         trips.put(tripId, trip);
 
         return tripId;
+    }
+
+    // public void addMember(long tripId, String memberName) {
+    // Trip trip = trips.get(tripId);
+    // if (trip == null) {
+    // throw new IllegalArgumentException("Trip not found" + tripId);
+    // }
+    // trip.addMember(memberName);
+    // }
+
+    public void addMember(long tripId, String memberName) {
+        Trip trip = getTripById(tripId);
+        trip.addMember(memberName);
+    }
+
+    public List<String> getMembers(long tripId) {
+        Trip trip = getTripById(tripId);
+        return trip.getMembers();
+    }
+
+    private Trip getTripById(long tripId) {
+        Trip trip = trips.get(tripId);
+
+        if (trip == null) {
+            throw new IllegalArgumentException("Trip not found: " + tripId);
+        }
+
+        return trip;
     }
 }

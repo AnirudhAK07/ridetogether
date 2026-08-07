@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import java.util.ArrayList;
+import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
 
 @RestController
@@ -48,5 +49,17 @@ public class TripController {
         long tripId = tripService.createTrip(request.getName());
 
         return new CreateTripResponse(tripId, request.getName());
+    }
+
+    @PostMapping("/{tripId}/members")
+    public void addMember(
+            @PathVariable long tripId,
+            @RequestBody AddMemberRequest request) {
+        tripService.addMember(tripId, request.getName());
+    }
+
+    @GetMapping("/{tripId}/members")
+    public List<String> getMembers(@PathVariable long tripId) {
+        return tripService.getMembers(tripId);
     }
 }
