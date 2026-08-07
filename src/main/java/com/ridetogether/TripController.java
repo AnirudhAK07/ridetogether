@@ -1,0 +1,52 @@
+package com.ridetogether;
+
+import java.util.List;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import java.util.ArrayList;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/trips")
+public class TripController {
+
+    private final TripService tripService;
+
+    public TripController(TripService tripService) {
+        this.tripService = tripService;
+    }
+
+    @GetMapping("/demo/settlements")
+    public List<SettlementResponse> getDemoSettlements() {
+        Trip trip = new Trip("Coorg Weekend Ride");
+
+        trip.addMember("Anirudh");
+        trip.addMember("Sanjay");
+        trip.addMember("Rahul");
+
+        trip.addExpense(new Expense("Fuel", "Anirudh", 1_500_000L));
+        trip.addExpense(new Expense("Hotel", "Sanjay", 800_000L));
+
+        List<SettlementResponse> response = new ArrayList<>();
+
+        for (Settlement settlement : trip.calculateSettlements()) {
+            response.add(new SettlementResponse(
+                    settlement.getFrom(),
+                    settlement.getTo(),
+                    Money.format(settlement.getAmountInPaise())));
+        }
+
+        return response;
+    }
+
+    @PostMapping
+    public CreateTripResponse createTrip(@RequestBody CreateTripRequest request) {
+        long tripId = tripService.createTrip(request.getName());
+
+        return new CreateTripResponse(tripId, request.getName());
+    }
+}
