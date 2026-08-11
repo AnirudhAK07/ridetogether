@@ -1,24 +1,26 @@
 package com.ridetogether;
 
-import java.util.LinkedHashMap;
+// import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-
+// import java.util.Map;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
+@Transactional
 public class TripService {
-    private final Map<Long, Trip> trips = new LinkedHashMap<>();
-    private long nextTripId = 1;
+    private final TripRepository tripRepository;
+
+    public TripService(TripRepository tripRepository) {
+        this.tripRepository = tripRepository;
+    }
 
     public long createTrip(String tripName) {
-        long tripId = nextTripId;
-        nextTripId++;
-
         Trip trip = new Trip(tripName);
-        trips.put(tripId, trip);
 
-        return tripId;
+        Trip savedTrip = tripRepository.save(trip);
+
+        return savedTrip.getId();
     }
 
     // public void addMember(long tripId, String memberName) {
@@ -32,6 +34,7 @@ public class TripService {
     public void addMember(long tripId, String memberName) {
         Trip trip = getTripById(tripId);
         trip.addMember(memberName);
+        tripRepository.save(trip);
     }
 
     public List<String> getMembers(long tripId) {
@@ -40,14 +43,8 @@ public class TripService {
     }
 
     private Trip getTripById(long tripId) {
-        Trip trip = trips.get(tripId);
-
-        if (trip == null) {
-            // throw new IllegalArgumentException("Trip not found: " + tripId);
-            throw new TripNotFoundException(tripId);
-        }
-
-        return trip;
+        return tripRepository.findById(tripId)
+                .orElseThrow(() -> new TripNotFoundException(tripId));
     }
 
     public void addExpense(
@@ -64,6 +61,7 @@ public class TripService {
                 amountInPaise);
 
         trip.addExpense(expense);
+        tripRepository.save(trip);
     }
 
     public List<Settlement> calculateSettlements(long tripId) {

@@ -1,18 +1,22 @@
 package com.ridetogether;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
+@SpringBootTest
 class TripServiceTest {
+
+    @Autowired
+    private TripService tripService;
 
     @Test
     void addsAndReturnsTripMembers() {
-        TripService tripService = new TripService();
-
         long tripId = tripService.createTrip("Coorg Weekend Ride");
         tripService.addMember(tripId, "Rahul");
 
@@ -21,8 +25,6 @@ class TripServiceTest {
 
     @Test
     void calculatesSettlementsForATrip() {
-        TripService tripService = new TripService();
-
         long tripId = tripService.createTrip("Coorg Weekend Ride");
 
         tripService.addMember(tripId, "Anirudh");
@@ -42,11 +44,8 @@ class TripServiceTest {
 
     @Test
     void throwsNotFoundWhenTripDoesNotExist() {
-        TripService tripService = new TripService();
-
         assertThrows(
                 TripNotFoundException.class,
                 () -> tripService.getMembers(999L));
     }
-
 }

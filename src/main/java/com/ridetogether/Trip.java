@@ -4,16 +4,44 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
+@Entity
+@Table(name = "trips")
 public class Trip {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String name;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "trip_id")
     private List<Expense> expenses;
+
+    @ElementCollection
     private List<String> members;
 
-    public Trip(String name) {
-        this.name = name;
+    protected Trip() {
         this.expenses = new ArrayList<>();
         this.members = new ArrayList<>();
+    }
+
+    public Trip(String name) {
+        this();
+        this.name = name;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public void addExpense(Expense expense) {
