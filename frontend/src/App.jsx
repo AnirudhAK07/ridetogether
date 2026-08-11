@@ -2,6 +2,7 @@ import { useState } from 'react'
 import './App.css'
 import SavedTripsSection from './components/SavedTripsSection.jsx'
 import CreateTripForm from './components/CreateTripForm.jsx'
+import PollsSection from './components/PollsSection.jsx'
 function rupeesToPaise(amountText) {
   const match = amountText.trim().match(/^(\d+)(?:\.(\d{1,2}))?$/)
 
@@ -35,6 +36,7 @@ const [isLoadingTrips, setIsLoadingTrips] = useState(false)
 const [tripDestination, setTripDestination] = useState('')
 const [tripStartDate, setTripStartDate] = useState('')
 const [tripEndDate, setTripEndDate] = useState('')
+const [polls, setPolls] = useState([])
 
   async function handleSubmit(event) {
   event.preventDefault()
@@ -93,6 +95,8 @@ const [tripEndDate, setTripEndDate] = useState('')
     setTripDestination('')
     setTripStartDate('')
     setTripEndDate('')
+    setPolls([])
+
     setMessage(`Created "${trip.name}".`)
   } catch (error) {
     setMessage(error.message)
@@ -133,22 +137,103 @@ async function handleSelectTrip(trip) {
     const expensesResponse = await fetch(
       `/api/trips/${trip.id}/expenses`,
     )
+    const pollsResponse = await fetch(
+      `/api/trips/${trip.id}/polls`,
+    )
 
-    if (!membersResponse.ok || !expensesResponse.ok) {
+    if (
+      !membersResponse.ok ||
+      !expensesResponse.ok ||
+      !pollsResponse.ok
+    ) {
       throw new Error('Could not load the trip details.')
     }
 
     const memberList = await membersResponse.json()
     const expenseList = await expensesResponse.json()
+    const pollList = await pollsResponse.json()
 
     setCreatedTrip(trip)
     setMembers(memberList)
     setExpenses(expenseList)
+    setPolls(pollList)
     setSettlements([])
     setMessage(`Loaded "${trip.name}".`)
   } catch (error) {
     setMessage(error.message)
   }
+}
+
+async function handleCreatePoll(question, options) {
+  if (createdTrip === null) {
+    throw new Error('Create or load a trip before adding a poll.')
+  }
+
+  const response = await fetch(
+    `/api/trips/${createdTrip.id}/polls`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        question,
+        options,
+      }),
+    },
+  )
+
+  if (!response.ok) {
+    throw new Error('Could not create the poll.')
+  }
+
+  const pollsResponse = await fetch(
+    `/api/trips/${createdTrip.id}/polls`,
+  )
+
+  if (!pollsResponse.ok) {
+    throw new Error('Could not refresh polls.')
+  }
+
+  const pollList = await pollsResponse.json()
+
+  setPolls(pollList)
+}
+
+async function handleVote(voterName, pollId, optionId) {
+  if (createdTrip === null) {
+    throw new Error('Create or load a trip before voting.')
+  }
+
+  const response = await fetch(
+    `/api/trips/${createdTrip.id}/polls/${pollId}/votes`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        voterName,
+        optionId,
+      }),
+    },
+  )
+
+  if (!response.ok) {
+    throw new Error('Could not record the vote.')
+  }
+
+  const pollsResponse = await fetch(
+    `/api/trips/${createdTrip.id}/polls`,
+  )
+
+  if (!pollsResponse.ok) {
+    throw new Error('Could not refresh polls.')
+  }
+
+  const pollList = await pollsResponse.json()
+
+  setPolls(pollList)
 }
 
 
@@ -338,6 +423,15 @@ async function handleAddExpense(event) {
           Active trip: {createdTrip.name} (ID: {createdTrip.id})
         </p>
       )}
+
+      {createdTrip && (
+<PollsSection
+  polls={polls}
+  members={members}
+  onCreatePoll={handleCreatePoll}
+  onVote={handleVote}
+/>
+)}
 
       {createdTrip && (
   <section>
