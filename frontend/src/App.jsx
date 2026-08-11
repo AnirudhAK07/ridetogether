@@ -394,9 +394,12 @@ async function handleAddExpense(event) {
 }
 
   return (
-    <main>
-      <h1>RideTogether</h1>
-      <p>Plan rides. Split expenses.</p>
+    <main className="app-shell">
+      <header className="app-hero">
+        <span className="eyebrow">GROUP RIDE PLANNER</span>
+        <h1>RideTogether</h1>
+        <p>Plan memorable rides, split every expense fairly, and decide together.</p>
+      </header>
 <CreateTripForm
   tripName={tripName}
   tripDestination={tripDestination}
@@ -416,12 +419,13 @@ async function handleAddExpense(event) {
   onLoadTrips={handleLoadTrips}
   onSelectTrip={handleSelectTrip}
 />
-      <p>{message}</p>
+      {message && <p className="app-message">{message}</p>}
 
       {createdTrip && (
-        <p>
-          Active trip: {createdTrip.name} (ID: {createdTrip.id})
-        </p>
+        <div className="active-trip">
+          <span>Active trip</span>
+          <strong>{createdTrip.name}</strong>
+        </div>
       )}
 
       {createdTrip && (

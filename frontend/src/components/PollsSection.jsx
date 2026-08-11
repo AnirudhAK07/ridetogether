@@ -36,7 +36,6 @@ function PollsSection({
 
     try {
       await onCreatePoll(question.trim(), optionList)
-
       setQuestion('')
       setOptionsText('')
       setMessage('Poll created.')
@@ -67,7 +66,7 @@ function PollsSection({
   }
 
   return (
-    <section>
+    <section className="polls-section">
       <h2>Group decisions</h2>
 
       <form onSubmit={handleSubmit}>
@@ -106,7 +105,7 @@ function PollsSection({
         ))}
       </select>
 
-      <p>{message}</p>
+      {message && <p>{message}</p>}
 
       {polls.length === 0 ? (
         <p>No polls yet.</p>
@@ -118,7 +117,7 @@ function PollsSection({
             <ul>
               {poll.options.map((option) => (
                 <li key={option.id}>
-                  {option.text} — {option.voteCount} vote(s)
+                  {option.text} - {option.voteCount} vote(s)
 
                   <button
                     type="button"

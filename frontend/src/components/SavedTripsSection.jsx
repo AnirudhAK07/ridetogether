@@ -5,7 +5,7 @@ function SavedTripsSection({
   onSelectTrip,
 }) {
   return (
-    <section>
+    <section className="saved-trips-section">
       <h2>Saved trips</h2>
 
       <button

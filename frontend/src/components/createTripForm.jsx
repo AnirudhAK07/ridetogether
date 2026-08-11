@@ -11,7 +11,7 @@ function CreateTripForm({
   onSubmit,
 }) {
   return (
-    <form onSubmit={onSubmit}>
+    <form className="trip-creation-form" onSubmit={onSubmit}>
       <label htmlFor="trip-name">Trip name</label>
       <input
         id="trip-name"
