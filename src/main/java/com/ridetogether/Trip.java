@@ -1,5 +1,6 @@
 package com.ridetogether;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.LinkedHashMap;
@@ -22,6 +23,9 @@ public class Trip {
     private Long id;
 
     private String name;
+    private String destination;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "trip_id")
@@ -36,8 +40,20 @@ public class Trip {
     }
 
     public Trip(String name) {
+        this(name, null, null, null);
+    }
+
+    public Trip(
+            String name,
+            String destination,
+            LocalDate startDate,
+            LocalDate endDate) {
+
         this();
         this.name = name;
+        this.destination = destination;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
     public Long getId() {
@@ -46,6 +62,18 @@ public class Trip {
 
     public String getName() {
         return name;
+    }
+
+    public String getDestination() {
+        return destination;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
     }
 
     public void addExpense(Expense expense) {

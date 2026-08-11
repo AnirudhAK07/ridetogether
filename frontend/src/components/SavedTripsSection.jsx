@@ -24,7 +24,11 @@ function SavedTripsSection({
                 type="button"
                 onClick={() => onSelectTrip(trip)}
               >
-                {trip.name} (ID: {trip.id})
+                <strong>{trip.name}</strong>
+<br />
+{trip.destination || 'Destination not set'}
+<br />
+{trip.startDate || 'No start date'} to {trip.endDate || 'No end date'}
               </button>
             </li>
           ))}

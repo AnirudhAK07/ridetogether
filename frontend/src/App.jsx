@@ -32,49 +32,74 @@ const [settlements, setSettlements] = useState([])
 const [isLoadingSettlements, setIsLoadingSettlements] = useState(false)
 const [savedTrips, setSavedTrips] = useState([])
 const [isLoadingTrips, setIsLoadingTrips] = useState(false)
+const [tripDestination, setTripDestination] = useState('')
+const [tripStartDate, setTripStartDate] = useState('')
+const [tripEndDate, setTripEndDate] = useState('')
 
   async function handleSubmit(event) {
-    event.preventDefault()
+  event.preventDefault()
 
-    const trimmedTripName = tripName.trim()
+  const trimmedTripName = tripName.trim()
+  const trimmedDestination = tripDestination.trim()
 
-    if (trimmedTripName === '') {
-      setMessage('Please enter a trip name.')
-      return
-    }
-
-    setIsCreating(true)
-    setMessage('')
-
-    try {
-      const response = await fetch('/api/trips', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: trimmedTripName,
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error('Could not create the trip.')
-      }
-
-      const trip = await response.json()
-
-      setCreatedTrip(trip)
-      setMembers([])
-      setExpenses([])
-      setTripName('')
-      setSettlements([])
-      setMessage(`Created "${trip.name}".`)
-    } catch (error) {
-      setMessage(error.message)
-    } finally {
-      setIsCreating(false)
-    }
+  if (trimmedTripName === '') {
+    setMessage('Please enter a trip name.')
+    return
   }
+
+  if (trimmedDestination === '') {
+    setMessage('Please enter a destination.')
+    return
+  }
+
+  if (tripStartDate === '' || tripEndDate === '') {
+    setMessage('Please select the trip dates.')
+    return
+  }
+
+  if (tripEndDate < tripStartDate) {
+    setMessage('The end date must be after the start date.')
+    return
+  }
+
+  setIsCreating(true)
+  setMessage('')
+
+  try {
+    const response = await fetch('/api/trips', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: trimmedTripName,
+        destination: trimmedDestination,
+        startDate: tripStartDate,
+        endDate: tripEndDate,
+      }),
+    })
+
+    if (!response.ok) {
+      throw new Error('Could not create the trip.')
+    }
+
+    const trip = await response.json()
+
+    setCreatedTrip(trip)
+    setMembers([])
+    setExpenses([])
+    setSettlements([])
+    setTripName('')
+    setTripDestination('')
+    setTripStartDate('')
+    setTripEndDate('')
+    setMessage(`Created "${trip.name}".`)
+  } catch (error) {
+    setMessage(error.message)
+  } finally {
+    setIsCreating(false)
+  }
+}
 
   async function handleLoadTrips() {
   setIsLoadingTrips(true)
@@ -287,10 +312,16 @@ async function handleAddExpense(event) {
     <main>
       <h1>RideTogether</h1>
       <p>Plan rides. Split expenses.</p>
-      <CreateTripForm
+<CreateTripForm
   tripName={tripName}
+  tripDestination={tripDestination}
+  tripStartDate={tripStartDate}
+  tripEndDate={tripEndDate}
   isCreating={isCreating}
   onTripNameChange={setTripName}
+  onDestinationChange={setTripDestination}
+  onStartDateChange={setTripStartDate}
+  onEndDateChange={setTripEndDate}
   onSubmit={handleSubmit}
 />
 

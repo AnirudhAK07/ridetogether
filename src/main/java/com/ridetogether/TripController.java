@@ -46,7 +46,11 @@ public class TripController {
 
     @PostMapping
     public CreateTripResponse createTrip(@RequestBody CreateTripRequest request) {
-        long tripId = tripService.createTrip(request.getName());
+        long tripId = tripService.createTrip(
+                request.getName(),
+                request.getDestination(),
+                request.getStartDate(),
+                request.getEndDate());
 
         return new CreateTripResponse(tripId, request.getName());
     }
@@ -110,7 +114,10 @@ public class TripController {
         for (Trip trip : tripService.getTrips()) {
             response.add(new TripSummaryResponse(
                     trip.getId(),
-                    trip.getName()));
+                    trip.getName(),
+                    trip.getDestination(),
+                    trip.getStartDate(),
+                    trip.getEndDate()));
         }
 
         return response;

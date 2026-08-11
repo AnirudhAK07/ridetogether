@@ -2,6 +2,7 @@ package com.ridetogether;
 
 // import java.util.LinkedHashMap;
 import java.util.List;
+import java.time.LocalDate;
 // import java.util.Map;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,20 @@ public class TripService {
     }
 
     public long createTrip(String tripName) {
-        Trip trip = new Trip(tripName);
+        return createTrip(tripName, null, null, null);
+    }
+
+    public long createTrip(
+            String tripName,
+            String destination,
+            LocalDate startDate,
+            LocalDate endDate) {
+
+        Trip trip = new Trip(
+                tripName,
+                destination,
+                startDate,
+                endDate);
 
         Trip savedTrip = tripRepository.save(trip);
 
