@@ -48,4 +48,26 @@ public class TripService {
 
         return trip;
     }
+
+    public void addExpense(
+            long tripId,
+            String description,
+            String paidBy,
+            long amountInPaise) {
+
+        Trip trip = getTripById(tripId);
+
+        Expense expense = new Expense(
+                description,
+                paidBy,
+                amountInPaise);
+
+        trip.addExpense(expense);
+    }
+
+    public List<Settlement> calculateSettlements(long tripId) {
+        Trip trip = getTripById(tripId);
+        return trip.calculateSettlements();
+    }
+
 }

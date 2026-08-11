@@ -62,4 +62,30 @@ public class TripController {
     public List<String> getMembers(@PathVariable long tripId) {
         return tripService.getMembers(tripId);
     }
+
+    @PostMapping("/{tripId}/expenses")
+    public void addExpense(
+            @PathVariable long tripId,
+            @RequestBody AddExpenseRequest request) {
+
+        tripService.addExpense(
+                tripId,
+                request.getDescription(),
+                request.getPaidBy(),
+                request.getAmountInPaise());
+    }
+
+    @GetMapping("/{tripId}/settlements")
+    public List<SettlementResponse> getSettlements(@PathVariable long tripId) {
+        List<SettlementResponse> response = new ArrayList<>();
+
+        for (Settlement settlement : tripService.calculateSettlements(tripId)) {
+            response.add(new SettlementResponse(
+                    settlement.getFrom(),
+                    settlement.getTo(),
+                    Money.format(settlement.getAmountInPaise())));
+        }
+
+        return response;
+    }
 }
