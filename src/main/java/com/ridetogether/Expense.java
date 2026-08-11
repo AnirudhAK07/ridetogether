@@ -27,4 +27,8 @@ public class Expense {
     public String getPaidBy() {
         return paidBy;
     }
+
+    public String getDescription() {
+        return description;
+    }
 }

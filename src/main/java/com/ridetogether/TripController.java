@@ -88,4 +88,18 @@ public class TripController {
 
         return response;
     }
+
+    @GetMapping("/{tripId}/expenses")
+    public List<ExpenseResponse> getExpenses(@PathVariable long tripId) {
+        List<ExpenseResponse> response = new ArrayList<>();
+
+        for (Expense expense : tripService.getExpenses(tripId)) {
+            response.add(new ExpenseResponse(
+                    expense.getDescription(),
+                    expense.getPaidBy(),
+                    Money.format(expense.getAmountInPaise())));
+        }
+
+        return response;
+    }
 }

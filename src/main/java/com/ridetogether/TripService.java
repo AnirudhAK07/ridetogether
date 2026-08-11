@@ -71,4 +71,8 @@ public class TripService {
         return trip.calculateSettlements();
     }
 
+    public List<Expense> getExpenses(long tripId) {
+        Trip trip = getTripById(tripId);
+        return trip.getExpenses();
+    }
 }

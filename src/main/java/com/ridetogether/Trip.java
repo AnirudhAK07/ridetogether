@@ -152,6 +152,10 @@ public class Trip {
         return List.copyOf(members);
     }
 
+    public List<Expense> getExpenses() {
+        return List.copyOf(expenses);
+    }
+
     // public double calculateEqualShare() {
     // if (members.isEmpty()) {
     // throw new IllegalStateException("A trip needs at least one member");
