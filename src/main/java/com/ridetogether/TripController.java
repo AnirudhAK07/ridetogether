@@ -122,4 +122,53 @@ public class TripController {
 
         return response;
     }
+
+    @PostMapping("/{tripId}/polls")
+    public void addPoll(
+            @PathVariable long tripId,
+            @RequestBody CreatePollRequest request) {
+
+        tripService.addPoll(
+                tripId,
+                request.getQuestion(),
+                request.getOptions());
+    }
+
+    @GetMapping("/{tripId}/polls")
+    public List<TripPollResponse> getPolls(
+            @PathVariable long tripId) {
+
+        List<TripPollResponse> response = new ArrayList<>();
+
+        for (TripPoll poll : tripService.getPolls(tripId)) {
+            List<PollOptionResponse> optionResponses = new ArrayList<>();
+
+            for (PollOption option : poll.getOptions()) {
+                optionResponses.add(new PollOptionResponse(
+                        option.getId(),
+                        option.getText(),
+                        option.getVoteCount()));
+            }
+
+            response.add(new TripPollResponse(
+                    poll.getId(),
+                    poll.getQuestion(),
+                    optionResponses));
+        }
+
+        return response;
+    }
+
+    @PostMapping("/{tripId}/polls/{pollId}/votes")
+    public void voteOnPoll(
+            @PathVariable long tripId,
+            @PathVariable long pollId,
+            @RequestBody CreateVoteRequest request) {
+
+        tripService.voteOnPoll(
+                tripId,
+                request.getVoterName(),
+                pollId,
+                request.getOptionId());
+    }
 }

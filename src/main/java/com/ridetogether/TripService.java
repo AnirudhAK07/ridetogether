@@ -37,6 +37,34 @@ public class TripService {
         return savedTrip.getId();
     }
 
+    public void addPoll(
+            long tripId,
+            String question,
+            List<String> optionTexts) {
+
+        Trip trip = getTripById(tripId);
+
+        TripPoll poll = new TripPoll(question, optionTexts);
+
+        trip.addPoll(poll);
+
+        tripRepository.save(trip);
+    }
+
+    public List<TripPoll> getPolls(long tripId) {
+        Trip trip = getTripById(tripId);
+
+        List<TripPoll> polls = trip.getPolls();
+
+        for (TripPoll poll : polls) {
+            for (PollOption option : poll.getOptions()) {
+                option.getVoteCount();
+            }
+        }
+
+        return polls;
+    }
+
     // public void addMember(long tripId, String memberName) {
     // Trip trip = trips.get(tripId);
     // if (trip == null) {
@@ -90,5 +118,18 @@ public class TripService {
     public List<Expense> getExpenses(long tripId) {
         Trip trip = getTripById(tripId);
         return trip.getExpenses();
+    }
+
+    public void voteOnPoll(
+            long tripId,
+            String memberName,
+            long pollId,
+            long optionId) {
+
+        Trip trip = getTripById(tripId);
+
+        trip.voteOnPoll(memberName, pollId, optionId);
+
+        tripRepository.save(trip);
     }
 }

@@ -30,12 +30,15 @@ public class Trip {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "trip_id")
     private List<Expense> expenses;
-
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "trip_id")
+    private List<TripPoll> polls;
     @ElementCollection
     private List<String> members;
 
     protected Trip() {
         this.expenses = new ArrayList<>();
+        this.polls = new ArrayList<>();
         this.members = new ArrayList<>();
     }
 
@@ -214,6 +217,41 @@ public class Trip {
 
     public List<Expense> getExpenses() {
         return List.copyOf(expenses);
+    }
+
+    public void addPoll(TripPoll poll) {
+        polls.add(poll);
+    }
+
+    public List<TripPoll> getPolls() {
+        return List.copyOf(polls);
+    }
+
+    public void voteOnPoll(
+            String memberName,
+            long pollId,
+            long optionId) {
+
+        if (!members.contains(memberName)) {
+            throw new IllegalArgumentException(
+                    "Only trip members can vote");
+        }
+
+        TripPoll selectedPoll = null;
+
+        for (TripPoll poll : polls) {
+            if (poll.getId().equals(pollId)) {
+                selectedPoll = poll;
+                break;
+            }
+        }
+
+        if (selectedPoll == null) {
+            throw new IllegalArgumentException(
+                    "The selected poll does not exist");
+        }
+
+        selectedPoll.vote(memberName, optionId);
     }
 
     // public double calculateEqualShare() {

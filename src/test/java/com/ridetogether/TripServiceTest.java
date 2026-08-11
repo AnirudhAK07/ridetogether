@@ -48,4 +48,38 @@ class TripServiceTest {
                 TripNotFoundException.class,
                 () -> tripService.getMembers(999L));
     }
+
+    @Test
+    void letsAMemberChangeTheirPollVote() {
+        long tripId = tripService.createTrip("Coorg Weekend Ride");
+
+        tripService.addMember(tripId, "Anirudh");
+
+        tripService.addPoll(
+                tripId,
+                "Which route should we take?",
+                List.of("Mysuru route", "Chikmagalur route"));
+
+        TripPoll poll = tripService.getPolls(tripId).get(0);
+
+        long mysuruOptionId = poll.getOptions().get(0).getId();
+        long chikmagalurOptionId = poll.getOptions().get(1).getId();
+
+        tripService.voteOnPoll(
+                tripId,
+                "Anirudh",
+                poll.getId(),
+                mysuruOptionId);
+
+        tripService.voteOnPoll(
+                tripId,
+                "Anirudh",
+                poll.getId(),
+                chikmagalurOptionId);
+
+        TripPoll updatedPoll = tripService.getPolls(tripId).get(0);
+
+        assertEquals(0, updatedPoll.getOptions().get(0).getVoteCount());
+        assertEquals(1, updatedPoll.getOptions().get(1).getVoteCount());
+    }
 }
