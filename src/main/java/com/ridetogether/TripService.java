@@ -43,7 +43,8 @@ public class TripService {
         Trip trip = trips.get(tripId);
 
         if (trip == null) {
-            throw new IllegalArgumentException("Trip not found: " + tripId);
+            // throw new IllegalArgumentException("Trip not found: " + tripId);
+            throw new TripNotFoundException(tripId);
         }
 
         return trip;

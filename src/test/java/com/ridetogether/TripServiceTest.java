@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class TripServiceTest {
 
@@ -38,4 +39,14 @@ class TripServiceTest {
         assertEquals("Anirudh", settlements.get(0).getTo());
         assertEquals(733_333L, settlements.get(0).getAmountInPaise());
     }
+
+    @Test
+    void throwsNotFoundWhenTripDoesNotExist() {
+        TripService tripService = new TripService();
+
+        assertThrows(
+                TripNotFoundException.class,
+                () -> tripService.getMembers(999L));
+    }
+
 }
