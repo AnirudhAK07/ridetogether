@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import './App.css'
-
+import SavedTripsSection from './components/SavedTripsSection.jsx'
+import CreateTripForm from './components/CreateTripForm.jsx'
 function rupeesToPaise(amountText) {
   const match = amountText.trim().match(/^(\d+)(?:\.(\d{1,2}))?$/)
 
@@ -286,48 +287,19 @@ async function handleAddExpense(event) {
     <main>
       <h1>RideTogether</h1>
       <p>Plan rides. Split expenses.</p>
+      <CreateTripForm
+  tripName={tripName}
+  isCreating={isCreating}
+  onTripNameChange={setTripName}
+  onSubmit={handleSubmit}
+/>
 
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="trip-name">Trip name</label>
-        <input
-          id="trip-name"
-          value={tripName}
-          onChange={(event) => setTripName(event.target.value)}
-          placeholder="Example: Coorg Weekend Ride"
-        />
-
-        <button type="submit" disabled={isCreating}>
-          {isCreating ? 'Creating...' : 'Create trip'}
-        </button>
-        </form>
-
-      <section>
-        <h2>Saved trips</h2>
-
-        <button
-          type="button"
-          onClick={handleLoadTrips}
-          disabled={isLoadingTrips}
-        >
-          {isLoadingTrips ? 'Loading...' : 'Load saved trips'}
-        </button>
-
-        {savedTrips.length > 0 && (
-          <ul>
-            {savedTrips.map((trip) => (
-              <li key={trip.id}>
-  <button
-    type="button"
-    onClick={() => handleSelectTrip(trip)}
-  >
-    {trip.name} (ID: {trip.id})
-  </button>
-</li>
-            ))}
-          </ul>
-        )}
-      </section>
-
+      <SavedTripsSection
+  savedTrips={savedTrips}
+  isLoadingTrips={isLoadingTrips}
+  onLoadTrips={handleLoadTrips}
+  onSelectTrip={handleSelectTrip}
+/>
       <p>{message}</p>
 
       {createdTrip && (
