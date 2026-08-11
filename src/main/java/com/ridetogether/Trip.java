@@ -44,6 +44,10 @@ public class Trip {
         return id;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public void addExpense(Expense expense) {
         if (!members.contains(expense.getPaidBy())) {
             throw new IllegalArgumentException("The expense payer must be a member of the trip");

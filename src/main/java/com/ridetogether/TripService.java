@@ -64,6 +64,10 @@ public class TripService {
         tripRepository.save(trip);
     }
 
+    public List<Trip> getTrips() {
+        return tripRepository.findAll();
+    }
+
     public List<Settlement> calculateSettlements(long tripId) {
         Trip trip = getTripById(tripId);
         return trip.calculateSettlements();

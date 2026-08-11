@@ -102,4 +102,17 @@ public class TripController {
 
         return response;
     }
+
+    @GetMapping
+    public List<TripSummaryResponse> getTrips() {
+        List<TripSummaryResponse> response = new ArrayList<>();
+
+        for (Trip trip : tripService.getTrips()) {
+            response.add(new TripSummaryResponse(
+                    trip.getId(),
+                    trip.getName()));
+        }
+
+        return response;
+    }
 }

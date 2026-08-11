@@ -29,6 +29,8 @@ const [isAddingExpense, setIsAddingExpense] = useState(false)
 const [expenses, setExpenses] = useState([])
 const [settlements, setSettlements] = useState([])
 const [isLoadingSettlements, setIsLoadingSettlements] = useState(false)
+const [savedTrips, setSavedTrips] = useState([])
+const [isLoadingTrips, setIsLoadingTrips] = useState(false)
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -72,6 +74,57 @@ const [isLoadingSettlements, setIsLoadingSettlements] = useState(false)
       setIsCreating(false)
     }
   }
+
+  async function handleLoadTrips() {
+  setIsLoadingTrips(true)
+  setMessage('')
+
+  try {
+    const response = await fetch('/api/trips')
+
+    if (!response.ok) {
+      throw new Error('Could not load saved trips.')
+    }
+
+    const tripList = await response.json()
+
+    setSavedTrips(tripList)
+    setMessage(`${tripList.length} saved trip(s) loaded.`)
+  } catch (error) {
+    setMessage(error.message)
+  } finally {
+    setIsLoadingTrips(false)
+  }
+}
+
+async function handleSelectTrip(trip) {
+  setMessage('')
+
+  try {
+    const membersResponse = await fetch(
+      `/api/trips/${trip.id}/members`,
+    )
+    const expensesResponse = await fetch(
+      `/api/trips/${trip.id}/expenses`,
+    )
+
+    if (!membersResponse.ok || !expensesResponse.ok) {
+      throw new Error('Could not load the trip details.')
+    }
+
+    const memberList = await membersResponse.json()
+    const expenseList = await expensesResponse.json()
+
+    setCreatedTrip(trip)
+    setMembers(memberList)
+    setExpenses(expenseList)
+    setSettlements([])
+    setMessage(`Loaded "${trip.name}".`)
+  } catch (error) {
+    setMessage(error.message)
+  }
+}
+
 
   async function handleAddMember(event) {
   event.preventDefault()
@@ -246,7 +299,34 @@ async function handleAddExpense(event) {
         <button type="submit" disabled={isCreating}>
           {isCreating ? 'Creating...' : 'Create trip'}
         </button>
-      </form>
+        </form>
+
+      <section>
+        <h2>Saved trips</h2>
+
+        <button
+          type="button"
+          onClick={handleLoadTrips}
+          disabled={isLoadingTrips}
+        >
+          {isLoadingTrips ? 'Loading...' : 'Load saved trips'}
+        </button>
+
+        {savedTrips.length > 0 && (
+          <ul>
+            {savedTrips.map((trip) => (
+              <li key={trip.id}>
+  <button
+    type="button"
+    onClick={() => handleSelectTrip(trip)}
+  >
+    {trip.name} (ID: {trip.id})
+  </button>
+</li>
+            ))}
+          </ul>
+        )}
+      </section>
 
       <p>{message}</p>
 
@@ -370,6 +450,8 @@ async function handleAddExpense(event) {
     )}
   </section>
 )}
+
+
 
     </main>
   )
